@@ -1,8 +1,8 @@
 package allan_rivera.pharmacy_locator.object.response;
 
 /**
- * Class used to store the information required for a ClosestPharmacyLookup response
- * using the named parameter idiom.
+ * Class used to store the information required for a ClosestPharmacyLookup
+ * response using the named parameter idiom.
  *
  * @author Allan Sattelberg Rivera
  *
@@ -15,7 +15,6 @@ public class ClosestPharmacyResponsePOJO {
 	private String state;
 	private String zip;
 	private Double distance;
-	private String errorMessage;
 
 	/**
 	 * @return the streetAddress
@@ -57,13 +56,6 @@ public class ClosestPharmacyResponsePOJO {
 	 */
 	public Double getDistance() {
 		return distance;
-	}
-
-	/**
-	 * @return the errorMessage
-	 */
-	public String getErrorMessage() {
-		return errorMessage;
 	}
 
 	/**
@@ -119,14 +111,4 @@ public class ClosestPharmacyResponsePOJO {
 		this.distance = distance;
 		return this;
 	}
-
-	/**
-	 * @param errorMessage the errorMessage to set
-	 * @return this
-	 */
-	public ClosestPharmacyResponsePOJO setErrorMessage(String errorMessage) {
-		this.errorMessage = errorMessage;
-		return this;
-	}
-
 }
