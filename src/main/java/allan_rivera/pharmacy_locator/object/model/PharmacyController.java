@@ -1,12 +1,15 @@
 package allan_rivera.pharmacy_locator.object.model;
 
 import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.ToDoubleFunction;
+
+import org.springframework.core.io.ClassPathResource;
 
 import com.opencsv.bean.CsvToBeanBuilder;
 
@@ -15,13 +18,13 @@ import allan_rivera.pharmacy_locator.object.response.ClosestPharmacyResponsePOJO
 /**
  * Class to control access to and operations on pharmacy data.
  * 
- * @author Allan
+ * @author Allan Sattelberg Rivera
  *
  */
 public class PharmacyController {
 	private static final double EARTH_RADIUS_MILES = 3958.8;
 	private static final double DEG_TO_RAD = Math.PI / 180;
-	private static final String PHARMACIES_FILE = "C:\\Users\\Allan\\eclipse-workspace\\pharmacy-locator\\src\\main\\resources\\pharmacies.csv";
+	private static final String PHARMACIES_FILE = "pharmacies.csv";
 	private static List<PharmacyBean> pharmacies;
 
 	/**
@@ -29,15 +32,16 @@ public class PharmacyController {
 	 * necessary.
 	 * 
 	 * @return a list of PharmacyBeans initialized with the data in the csv file
+	 * @throws IOException           if the csv file could not be opened
 	 * @throws IllegalStateException if the csv contains unparsable data
-	 * @throws FileNotFoundException if the csv file does not exist
 	 */
-	public static List<PharmacyBean> getPharmacies() throws IllegalStateException, FileNotFoundException {
+	public static List<PharmacyBean> getPharmacies() throws IllegalStateException, IOException {
 		if (pharmacies != null) {
 			return pharmacies;
 		}
-		pharmacies = new CsvToBeanBuilder<PharmacyBean>(new FileReader(PHARMACIES_FILE)).withType(PharmacyBean.class)
-				.build().parse();
+		pharmacies = new CsvToBeanBuilder<PharmacyBean>(
+				new InputStreamReader(new ClassPathResource(PHARMACIES_FILE).getInputStream()))
+						.withType(PharmacyBean.class).build().parse();
 		return pharmacies;
 	}
 
@@ -85,7 +89,7 @@ public class PharmacyController {
 	 * @throws FileNotFoundException see getPharmacies()
 	 */
 	public static Optional<ClosestPharmacyResponsePOJO> getClosestPharmacy(Double latitude, Double longitude)
-			throws IllegalStateException, FileNotFoundException {
+			throws IllegalStateException, IOException {
 		ToDoubleFunction<PharmacyBean> distFormula = (pharm) -> haversineFormula(latitude * DEG_TO_RAD,
 				longitude * DEG_TO_RAD, pharm.getLatitude() * DEG_TO_RAD, pharm.getLongitude() * DEG_TO_RAD);
 		Function<PharmacyBean, ClosestPharmacyResponsePOJO> responseConstructor = (pharm) -> constructResponse(pharm,
