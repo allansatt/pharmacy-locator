@@ -1,6 +1,7 @@
 package allan_rivera.pharmacy_locator;
 
 import java.io.FileNotFoundException;
+import java.io.Serializable;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,9 +32,14 @@ public class ClosestPharmacyEndpoint {
 	 * @throws IllegalStateException
 	 */
 	@GetMapping("/")
-	public ResponseEntity<ClosestPharmacyResponsePOJO> getClosest(@RequestParam Double latitude,
-			@RequestParam Double longitude) throws IllegalStateException, FileNotFoundException {
-		return PharmacyController.getClosestPharmacy(latitude, longitude).map(ResponseEntity::ok)
-				.orElse(new ResponseEntity<ClosestPharmacyResponsePOJO>(HttpStatus.NO_CONTENT));
+	public ResponseEntity<? extends Object> getClosest(@RequestParam Double latitude,
+			@RequestParam Double longitude){
+		try {
+			return PharmacyController.getClosestPharmacy(latitude, longitude).map(ResponseEntity::ok)
+					.orElse(new ResponseEntity<ClosestPharmacyResponsePOJO>(HttpStatus.NO_CONTENT));
+		} catch (Throwable e) {
+			e.printStackTrace();
+			return new ResponseEntity<String>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 }
